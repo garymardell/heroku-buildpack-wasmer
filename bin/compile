@@ -31,31 +31,29 @@ tar -xvzf wasmer-darwin-amd64.tar.gz -C $2/wasmer
 # make build-capi
 # make package-capi
 
-# mkdir -p $HOME/wasmer
+mkdir -p $HOME/wasmer
 
-# # cp -r $CACHE_DIR/libgraphqlparser-files/usr/local/* $BUILD_DIR/libgraphqlparser
-# cp -r /tmp/codon/tmp/cache/libgraphqlparser-files $BUILD_DIR/libgraphqlparser
+cp -r $CACHE_DIR/wasmer/ $BUILD_DIR/wasmer
 
-# # Make the library files available to later buildpacks
-# echo "Building runtime environment"
+mkdir -p $BUILD_DIR/.profile.d
+cat <<EOF >$BUILD_DIR/.profile.d/wasmer.sh
+export LD_LIBRARY_PATH="\$HOME/wasmer/lib:\$LD_LIBRARY_PATH"
+export LIBRARY_PATH="\$HOME/wasmer/lib:\$LIBRARY_PATH"
+export INCLUDE_PATH="\$HOME/wasmer/include:\$INCLUDE_PATH"
+export CPATH="\$INCLUDE_PATH"
+export CPPPATH="\$INCLUDE_PATH"
+EOF
 
-# mkdir -p $BUILD_DIR/.profile.d
-# cat <<EOF >$BUILD_DIR/.profile.d/libgraphqlparser.sh
-# export LD_LIBRARY_PATH="\$HOME/libgraphqlparser/usr/local/lib:\$LD_LIBRARY_PATH"
-# export LIBRARY_PATH="\$HOME/libgraphqlparser/usr/local/lib:\$LIBRARY_PATH"
-# export INCLUDE_PATH="\$HOME/libgraphqlparser/usr/local/include:\$INCLUDE_PATH"
-# export CPATH="\$INCLUDE_PATH"
-# export CPPPATH="\$INCLUDE_PATH"
-# EOF
 
-# echo "$BUILD_DIR/.profile.d/libgraphqlparser.sh"
 
-# export LD_LIBRARY_PATH="$BUILD_DIR/libgraphqlparser/usr/local/lib:$LD_LIBRARY_PATH"
-# export LIBRARY_PATH="$BUILD_DIR/libgraphqlparser/usr/local/lib:$LIBRARY_PATH"
-# export INCLUDE_PATH="$BUILD_DIR/libgraphqlparser/usr/local/include:$INCLUDE_PATH"
-# export CPATH="$INCLUDE_PATH"
-# export CPPPATH="$INCLUDE_PATH"
+echo "$BUILD_DIR/.profile.d/wasmer.sh"
 
-# export | grep -E -e ' (LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH)='  > "$LP_DIR/export"
+export LD_LIBRARY_PATH="$BUILD_DIR/wasmer/lib:$LD_LIBRARY_PATH"
+export LIBRARY_PATH="$BUILD_DIR/wasmer/lib:$LIBRARY_PATH"
+export INCLUDE_PATH="$BUILD_DIR/wasmer/include:$INCLUDE_PATH"
+export CPATH="$INCLUDE_PATH"
+export CPPPATH="$INCLUDE_PATH"
+
+export | grep -E -e ' (LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH)='  > "$LP_DIR/export"
 
 exit 0
