@@ -26,7 +26,7 @@ fi
 mkdir -p $CACHE_DIR/wasmer
 tar -xvzf 1.0.2.tar.gz -C $2/wasmer
 
-cd $CACHE_DIR/wasmer
+cd $CACHE_DIR/wasmer/wasmer-1.0.2
 
 make build-capi
 make package-capi
