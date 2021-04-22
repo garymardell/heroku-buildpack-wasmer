@@ -18,20 +18,20 @@ mkdir -p $CACHE_DIR
 cd $CACHE_DIR
 
 # Download wasmer
-if [ ! -f $2/1.0.2.tar.gz ]; then
-  wget https://github.com/wasmerio/wasmer/archive/refs/tags/1.0.2.tar.gz
+if [ ! -f $2/wasmer-darwin-amd64.tar.gz ]; then
+  wget https://github.com/wasmerio/wasmer/releases/download/1.0.2/wasmer-darwin-amd64.tar.gz
 fi
 
-# Install wasmer
+# # Install wasmer
 mkdir -p $CACHE_DIR/wasmer
-tar -xvzf 1.0.2.tar.gz -C $2/wasmer
+tar -xvzf wasmer-darwin-amd64.tar.gz -C $2/wasmer
 
-cd $CACHE_DIR/wasmer/wasmer-1.0.2
+# cd $CACHE_DIR/wasmer/wasmer-1.0.2
 
-make build-capi
-make package-capi
+# make build-capi
+# make package-capi
 
-mkdir -p $HOME/wasmer
+# mkdir -p $HOME/wasmer
 
 # # cp -r $CACHE_DIR/libgraphqlparser-files/usr/local/* $BUILD_DIR/libgraphqlparser
 # cp -r /tmp/codon/tmp/cache/libgraphqlparser-files $BUILD_DIR/libgraphqlparser
