@@ -1,32 +1,61 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir>
 
-# fail fast
-set -e
-
-# debug
-# set -x
-
 BUILD_DIR=$1
 CACHE_DIR=$2
-WASMER_BUILD_DIR=$BUILD_DIR/.wasmer
+ENV_DIR=${3:-}
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
-function topic() {
-  echo "-----> $*"
-}
+echo "$LP_DIR"
 
-mkdir -p $WASMER_BUILD_DIR
+BUILDPACK_NAME=libwasmer
 
-echo "Touching profile"
-touch ~/.profile
+# $1 = build_dir (location of the app)
+# $2 = cache_dir
+# $3 = env_dir (contains a file for each of the app's config variables)
 
-# install wasmer to $WASMER_BUILD_DIR
-export INSTALL_DIRECTORY=$WASMER_BUILD_DIR
-curl https://get.wasmer.io -sSfL | sh
+mkdir -p $CACHE_DIR
+cd $CACHE_DIR
 
-mkdir -p $BUILD_DIR/.profile.d
-cat <<EOS > $BUILD_DIR/.profile.d/000_wasmer.sh
-export WASMER_DIR="/app/.wasmer"
-export WASMER_CACHE_DIR="\$WASMER_DIR/cache"
-export PATH="\$WASMER_DIR/bin:\$WASMER_DIR/globals/wapm_packages/.bin:\$PATH"
-EOS
+# Download wasmer
+if [ ! -f $2/1.0.2.tar.gz ]; then
+  wget https://github.com/wasmerio/wasmer/archive/refs/tags/1.0.2.tar.gz
+fi
+
+# Install wasmer
+mkdir -p $CACHE_DIR/wasmer
+tar -xvzf 1.0.2.tar.gz -C $2/wasmer
+
+cd $CACHE_DIR/wasmer
+
+make build-capi
+make package-capi
+
+mkdir -p $HOME/wasmer
+
+# # cp -r $CACHE_DIR/libgraphqlparser-files/usr/local/* $BUILD_DIR/libgraphqlparser
+# cp -r /tmp/codon/tmp/cache/libgraphqlparser-files $BUILD_DIR/libgraphqlparser
+
+# # Make the library files available to later buildpacks
+# echo "Building runtime environment"
+
+# mkdir -p $BUILD_DIR/.profile.d
+# cat <<EOF >$BUILD_DIR/.profile.d/libgraphqlparser.sh
+# export LD_LIBRARY_PATH="\$HOME/libgraphqlparser/usr/local/lib:\$LD_LIBRARY_PATH"
+# export LIBRARY_PATH="\$HOME/libgraphqlparser/usr/local/lib:\$LIBRARY_PATH"
+# export INCLUDE_PATH="\$HOME/libgraphqlparser/usr/local/include:\$INCLUDE_PATH"
+# export CPATH="\$INCLUDE_PATH"
+# export CPPPATH="\$INCLUDE_PATH"
+# EOF
+
+# echo "$BUILD_DIR/.profile.d/libgraphqlparser.sh"
+
+# export LD_LIBRARY_PATH="$BUILD_DIR/libgraphqlparser/usr/local/lib:$LD_LIBRARY_PATH"
+# export LIBRARY_PATH="$BUILD_DIR/libgraphqlparser/usr/local/lib:$LIBRARY_PATH"
+# export INCLUDE_PATH="$BUILD_DIR/libgraphqlparser/usr/local/include:$INCLUDE_PATH"
+# export CPATH="$INCLUDE_PATH"
+# export CPPPATH="$INCLUDE_PATH"
+
+# export | grep -E -e ' (LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH)='  > "$LP_DIR/export"
+
+exit 0
