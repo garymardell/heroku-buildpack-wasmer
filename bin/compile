@@ -18,13 +18,13 @@ mkdir -p $CACHE_DIR
 cd $CACHE_DIR
 
 # Download wasmer
-if [ ! -f $2/wasmer-linux-aarch64.tar.gz ]; then
-  wget https://github.com/wasmerio/wasmer/releases/download/1.0.2/wasmer-linux-aarch64.tar.gz
+if [ ! -f $2/wasmer-linux-amd64.tar.gz ]; then
+  wget https://github.com/wasmerio/wasmer/releases/download/1.0.2/wasmer-linux-amd64.tar.gz
 fi
 
 # # Install wasmer
 mkdir -p $CACHE_DIR/wasmer
-tar -xvzf wasmer-linux-aarch64.tar.gz -C $2/wasmer
+tar -xvzf wasmer-linux-amd64.tar.gz -C $2/wasmer
 
 # cd $CACHE_DIR/wasmer/wasmer-1.0.2
 
